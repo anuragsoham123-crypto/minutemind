@@ -1,0 +1,25 @@
+# Dependencies
+node_modules/
+__pycache__/
+*.pyc
+
+# Environment
+.env
+.env.local
+.env.*.local
+
+# Firebase
+firebase-service-account.json
+
+# IDE
+.vscode/
+.idea/
+
+# Build
+.next/
+out/
+dist/
+
+# OS
+.DS_Store
+Thumbs.db
