@@ -17,7 +17,7 @@ app = FastAPI(
 # CORS
 app.add_middleware(
     CORSMiddleware,
-    allow_origins=[FRONTEND_URL, "http://localhost:3000", "http://localhost:3001"],
+    allow_origins=[FRONTEND_URL, "https://minutemind-hazel.vercel.app","https://minutemind-git-main-anuragsoham123-cryptos-projects.vercel.app", "https://minutemind-rncltndt2-anuragsoham123-cryptos-projects.vercel.app", "https://resourceful-harmony-production.up.railway.app", "http://localhost:3000", "http://localhost:3001"],
     allow_credentials=True,
     allow_methods=["*"],
     allow_headers=["*"],
