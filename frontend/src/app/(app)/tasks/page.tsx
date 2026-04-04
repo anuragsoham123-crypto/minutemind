@@ -49,10 +49,13 @@ export default function TasksPage() {
 
   const filteredTasks = filter === 'all' ? tasks : tasks.filter((t) => t.status === filter);
 
-  const filterTabs = statusOptions.map((s) => ({
-    id: s,
-    label: `${statusLabels[s]} (${s === 'all' ? tasks.length : tasks.filter(t => t.status === s).length})`,
-  }));
+  const filterTabs = [
+    { id: 'blank', label: ' ' },
+    ...statusOptions.map((s) => ({
+      id: s,
+      label: `${statusLabels[s]} (${s === 'all' ? tasks.length : tasks.filter(t => t.status === s).length})`,
+    }))
+  ];
 
   if (loading) {
     return (
