@@ -11,10 +11,11 @@ GEMINI_API_KEY = os.getenv("GEMINI_API_KEY", "")
 OPENAI_API_KEY = os.getenv("OPENAI_API_KEY", "")
 GROQ_API_KEY = os.getenv("GROQ_API_KEY", "")
 
-# Email (Resend & SMTP)
+# Email (Simple SMTP)
+SMTP_HOST = os.getenv("SMTP_HOST", "smtp.gmail.com")
+SMTP_PORT = int(os.getenv("SMTP_PORT", "587"))
 SMTP_EMAIL = os.getenv("SMTP_EMAIL", "")
 SMTP_PASSWORD = os.getenv("SMTP_PASSWORD", "")
-RESEND_API_KEY = os.getenv("RESEND_API_KEY", "")
 
 # CORS
 FRONTEND_URL = os.getenv("FRONTEND_URL", "http://localhost:3000")
