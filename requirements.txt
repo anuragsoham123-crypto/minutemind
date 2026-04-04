@@ -8,3 +8,4 @@ resend
 pydantic
 python-multipart
 pydantic[email]
+email-validator
