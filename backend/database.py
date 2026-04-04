@@ -1,18 +1,26 @@
 import firebase_admin
 from firebase_admin import credentials, firestore
-from config import FIREBASE_SERVICE_ACCOUNT_PATH
-import os
+from config import FIREBASE_SERVICE_ACCOUNT_JSON
+import json
 
 _db = None
 
 def get_db():
     global _db
+
     if _db is None:
-        if os.path.exists(FIREBASE_SERVICE_ACCOUNT_PATH):
-            cred = credentials.Certificate(FIREBASE_SERVICE_ACCOUNT_PATH)
-            firebase_admin.initialize_app(cred)
-        else:
-            # Falls back to GOOGLE_APPLICATION_CREDENTIALS env var or default credentials
-            firebase_admin.initialize_app()
+        # Initialize Firebase only once
+        if not firebase_admin._apps:
+            if FIREBASE_SERVICE_ACCOUNT_JSON:
+                # ✅ Use JSON from environment (Railway-safe)
+                cred = credentials.Certificate(
+                    json.loads(FIREBASE_SERVICE_ACCOUNT_JSON)
+                )
+                firebase_admin.initialize_app(cred)
+            else:
+                # ❌ No credentials → fail clearly
+                raise Exception("Firebase credentials not found")
+
         _db = firestore.client()
+
     return _db
