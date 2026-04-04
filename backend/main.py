@@ -1,3 +1,4 @@
+print("🚀 APP STARTING...")
 from fastapi import FastAPI, Request
 from fastapi.middleware.cors import CORSMiddleware
 from fastapi.responses import JSONResponse
@@ -5,6 +6,7 @@ from starlette.exceptions import HTTPException as StarletteHTTPException
 from fastapi.exceptions import RequestValidationError
 import traceback
 
+print("✅ Imports loaded")
 from config import FRONTEND_URL
 from routers import meetings, tasks, dashboard, reminders, teams, invitations, insights, workload, briefs
 
