@@ -50,7 +50,7 @@ export const ContinuousTabs: FC<ContinuousTabsProps> = ({
         <LayoutGroup id={layoutGroupId}>
             <nav
                 className={`
-          relative flex items-center mx-auto w-[calc(100%-10px)] max-w-fit gap-22 pl-[32px] pr-[18px] py-2 sm:pl-[36px] sm:pr-[20px] sm:py-2.5
+          relative flex items-center mx-auto w-[calc(100%-10px)] w-full gap-[20px] pl-[32px] pr-[18px] py-2 sm:pl-[36px] sm:pr-[20px] sm:py-2.5
             rounded-full
             border border-[#E5E5E9] dark:border-zinc-800
             bg-linear-to-b from-[#ffffff] to-[#e9e9f2]
@@ -72,10 +72,10 @@ export const ContinuousTabs: FC<ContinuousTabsProps> = ({
                         <button
                             key={tab.id}
                             onClick={() => handleChange(tab.id)}
-                            className={`relative h-15 shrink-0 px-7 py-3 sm:px-8 sm:py-4 rounded-full outline-none ${tabClassName}`}
+                            className={`relative h-15 rounded-full outline-none ${tab.id === 'blank' ? 'w-[10px] min-w-[10px] px-0 opacity-0 pointer-events-none shrink-0' : 'flex-1 shrink-0 px-7 py-3 sm:px-8 sm:py-4'} ${tabClassName}`}
                         >
                             {/* Active pill */}
-                            {isActive && (
+                            {isActive && tab.id !== 'blank' && (
                                 <motion.div
                                     layoutId={pillId}
                                     transition={{
