@@ -1,6 +1,5 @@
 uvicorn
 fastapi
-uvicorn[standard]
 firebase-admin
 google-genai
 openai
