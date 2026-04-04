@@ -2,9 +2,8 @@ from fastapi import APIRouter, HTTPException, Depends
 from database import get_db
 from models.schemas import ReminderRequest
 from middleware.auth import get_current_user
-from config import RESEND_API_KEY
-import resend
-
+from config import SMTP_EMAIL
+from services.email_service import send_email_smtp
 router = APIRouter(prefix="/api/reminders", tags=["reminders"])
 
 
@@ -107,15 +106,13 @@ async def send_reminders(request: ReminderRequest, user: dict = Depends(get_curr
     if meeting_doc.to_dict().get("created_by") != user["uid"]:
         raise HTTPException(status_code=403, detail="You don't have access to this meeting")
 
-    if not RESEND_API_KEY:
-        raise HTTPException(status_code=500, detail="Resend not configured. Set RESEND_API_KEY in .env")
+    if not SMTP_EMAIL:
+        raise HTTPException(status_code=500, detail="SMTP email not configured. Set SMTP_EMAIL in .env")
 
     sent = []
     failed = []
 
     try:
-        resend.api_key = RESEND_API_KEY
-
         for recipient in request.recipients:
             try:
                 html_body = _build_email_html(
@@ -127,12 +124,8 @@ async def send_reminders(request: ReminderRequest, user: dict = Depends(get_curr
                     decisions=request.decisions,
                 )
 
-                resend.Emails.send({
-                    "from": "MinuteMind <onboarding@resend.dev>",
-                    "to": recipient.email,
-                    "subject": f"🔔 Task Reminder: {recipient.task[:60]}",
-                    "html": html_body
-                })
+                subject = f"🔔 Task Reminder: {recipient.task[:60]}"
+                send_email_smtp(recipient.email, subject, html_body)
 
                 sent.append(recipient.email)
 
