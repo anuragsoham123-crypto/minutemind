@@ -7,3 +7,4 @@ python-dotenv
 resend
 pydantic
 python-multipart
+pydantic[email]
