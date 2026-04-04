@@ -4,9 +4,8 @@ from models.schemas import TeamCreate, TeamInvite
 from middleware.auth import get_current_user
 from datetime import datetime
 from services.teams_service import scan_organization_dependencies
-from config import FRONTEND_URL, RESEND_API_KEY
-import resend
-
+from config import FRONTEND_URL, SMTP_EMAIL
+from services.email_service import send_email_smtp
 router = APIRouter(prefix="/api/teams", tags=["teams"])
 
 
@@ -171,11 +170,9 @@ async def invite_to_team(team_id: str, data: TeamInvite, user: dict = Depends(ge
         "joined_at": None,
     })
 
-    # Send an email invite through Resend if configured
-    if RESEND_API_KEY:
+    # Send an email invite through SMTP if configured
+    if SMTP_EMAIL:
         try:
-            resend.api_key = RESEND_API_KEY
-            
             html_body = f"""
             <html>
             <body style="font-family: Arial, sans-serif; background-color: #f9f9f9; padding: 20px;">
@@ -192,15 +189,11 @@ async def invite_to_team(team_id: str, data: TeamInvite, user: dict = Depends(ge
             </html>
             """
             
-            resend.Emails.send({
-                "from": "MinuteMind <onboarding@resend.dev>",
-                "to": data.email,
-                "subject": f"Join {team_data['name']} on MinuteMind",
-                "html": html_body
-            })
+            subject = f"Join {team_data['name']} on MinuteMind"
+            send_email_smtp(data.email, subject, html_body)
             
         except Exception as e:
-            print(f"Failed to send invite email via Resend: {e}")
+            print(f"Failed to send invite email via SMTP: {e}")
             # We don't fail the request completely if email fails, but maybe we should log it.
 
     return {"message": f"Invitation sent to {data.email}", "invitation_id": inv_ref.id}
