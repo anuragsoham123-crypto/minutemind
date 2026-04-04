@@ -1,5 +1,3 @@
-import os
-import resend
 from datetime import datetime
 from fastapi import APIRouter, HTTPException, Depends
 from pydantic import BaseModel, EmailStr
@@ -8,10 +6,8 @@ from pydantic import BaseModel, EmailStr
 from database import get_db
 from middleware.auth import get_current_user
 
-# Configure your Resend API key
-# Make sure to set RESEND_API_KEY in your environment variables
-resend.api_key = os.environ.get("RESEND_API_KEY")
-
+# Remove resend imports and config
+from services.email_service import send_email_smtp
 router = APIRouter(prefix="/api/invitations", tags=["invitations"])
 
 # --- Models ---
@@ -50,28 +46,24 @@ async def send_invitation(invitation: InvitationRequest, user: dict = Depends(ge
         "invited_at": now,
     })
 
-    # 2. Send the email using Resend
+    # 2. Send the email using simple SMTP
     try:
         # Build the acceptance link (Swap 'localhost:3000' with your actual frontend URL)
         accept_link = f"http://localhost:3000/invitations/accept?id={inv_ref.id}"
-
-        params = {
-            "from": "Your App Name <onboarding@resend.dev>", # Change for production
-            "to": [invitation.email],
-            "subject": f"You've been invited to join {invitation.team_name}",
-            "html": f"""
-            <div style="font-family: sans-serif; color: #333;">
-                <h2>Team Invitation</h2>
-                <p>Hi there,</p>
-                <p><strong>{user.get('name', user['email'])}</strong> has invited you to join their team: <strong>{invitation.team_name}</strong>.</p>
-                <a href="{accept_link}" style="display: inline-block; padding: 10px 20px; background-color: #007bff; color: white; text-decoration: none; border-radius: 5px;">
-                    Accept Invitation
-                </a>
-            </div>
-            """
-        }
         
-        email_response = resend.Emails.send(params)
+        subject = f"You've been invited to join {invitation.team_name}"
+        html_body = f"""
+        <div style="font-family: sans-serif; color: #333;">
+            <h2>Team Invitation</h2>
+            <p>Hi there,</p>
+            <p><strong>{user.get('name', user['email'])}</strong> has invited you to join their team: <strong>{invitation.team_name}</strong>.</p>
+            <a href="{accept_link}" style="display: inline-block; padding: 10px 20px; background-color: #007bff; color: white; text-decoration: none; border-radius: 5px;">
+                Accept Invitation
+            </a>
+        </div>
+        """
+        
+        send_email_smtp(invitation.email, subject, html_body, from_name="MinuteMind Onboarding")
         
     except Exception as e:
         raise HTTPException(status_code=500, detail=f"Failed to send email: {str(e)}")
