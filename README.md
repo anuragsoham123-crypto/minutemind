@@ -72,7 +72,7 @@ It ingests your meeting audio, splits the conversation into **tasks, actions, an
 | Frontend | Next.js (React) |
 | Backend | FastAPI (Python) |
 | Database | Firebase (Firestore) |
-| AI | OpenAI API |
+| AI | OpenAI and Groq API |
 | Auth | Firebase Auth |
 
 ---
@@ -118,6 +118,7 @@ npm run dev
 
 **Backend (`.env`)**
 ```
+GROQ_API_KEY=
 OPENAI_API_KEY=
 FIREBASE_PROJECT_ID=
 FIREBASE_PRIVATE_KEY=
